@@ -1,0 +1,19 @@
+{
+  "C_Cpp.intelliSenseEngine": "Tag Parser",
+  "idf.adapterTargetName": "esp32",
+  "idf.openOcdConfigs": [
+    "interface/ftdi/esp32_devkitj_v1.cfg",
+    "target/esp32.cfg"
+  ],
+  "idf.port": "/dev/cu.SLAB_USBtoUART",
+  "idf.pythonBinPath": "/Users/obe/.espressif/python_env/idf4.4_py3.8_env/bin/python",
+  "idf.espIdfPath": "/Users/obe/esp/esp-idf",
+  "idf.toolsPath": "/Users/obe/.espressif",
+  "idf.customExtraPaths": "/Users/obe/.espressif/tools/xtensa-esp32-elf/esp-2021r2-patch3-8.4.0/xtensa-esp32-elf/bin:/Users/obe/.espressif/tools/xtensa-esp32s2-elf/esp-2021r2-patch3-8.4.0/xtensa-esp32s2-elf/bin:/Users/obe/.espressif/tools/xtensa-esp32s3-elf/esp-2021r2-patch3-8.4.0/xtensa-esp32s3-elf/bin:/Users/obe/.espressif/tools/riscv32-esp-elf/esp-2021r2-patch3-8.4.0/riscv32-esp-elf/bin:/Users/obe/.espressif/tools/esp32ulp-elf/2.28.51-esp-20191205/esp32ulp-elf-binutils/bin:/Users/obe/.espressif/tools/esp32s2ulp-elf/2.28.51-esp-20191205/esp32s2ulp-elf-binutils/bin:/Users/obe/.espressif/tools/cmake/3.20.3/CMake.app/Contents/bin:/Users/obe/.espressif/tools/openocd-esp32/v0.11.0-esp32-20211220/openocd-esp32/bin:/Users/obe/.espressif/tools/ninja/1.10.2",
+  "idf.customExtraVars": "{\"OPENOCD_SCRIPTS\":\"/Users/obe/.espressif/tools/openocd-esp32/v0.11.0-esp32-20211220/openocd-esp32/share/openocd/scripts\"}",
+  "idf.gitPath": "/usr/bin/git",
+  "idf.flashType": "UART",
+  "files.associations": {
+    "pca9685.h": "c"
+  }
+}
