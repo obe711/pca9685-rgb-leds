@@ -28,15 +28,23 @@
 #define RED_LED_PIN_INDEX 2
 #endif
 
+#ifndef NUM_LEDS
+#define NUM_LEDS 4
+#endif
+
+#ifndef NUM_LED_CHANNELS
+#define NUM_LED_CHANNELS NUM_LEDS * 3
+#endif
+
 static const char *PCA_LED_TAG = "pca9685_leds";
 static i2c_dev_t dev;
 
-static uint16_t default_led_values[12] = {4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096};
+static uint16_t default_led_values[NUM_LED_CHANNELS];
 
 // LEDs off
 void init_leds(void)
 {
-  for (int i = 0; i < sizeof default_led_values / sizeof *default_led_values; i++)
+  for (int i = 0; i < NUM_LED_CHANNELS; i++)
   {
     default_led_values[i] = 4096;
   }
@@ -68,28 +76,28 @@ void set_blue(uint16_t *blue_value)
 void turn_off_leds(void)
 {
   init_leds();
-  if (pca9685_set_pwm_values(&dev, 0, 12, default_led_values) != ESP_OK)
+  if (pca9685_set_pwm_values(&dev, 0, NUM_LED_CHANNELS, default_led_values) != ESP_OK)
     ESP_LOGE(PCA_LED_TAG, "Could not set PWM values");
 }
 void red(uint16_t *red_value)
 {
   init_leds();
   set_red(red_value);
-  if (pca9685_set_pwm_values(&dev, 0, 12, default_led_values) != ESP_OK)
+  if (pca9685_set_pwm_values(&dev, 0, NUM_LED_CHANNELS, default_led_values) != ESP_OK)
     ESP_LOGE(PCA_LED_TAG, "Could not set PWM values");
 }
 void green(uint16_t *green_value)
 {
   init_leds();
   set_green(green_value);
-  if (pca9685_set_pwm_values(&dev, 0, 12, default_led_values) != ESP_OK)
+  if (pca9685_set_pwm_values(&dev, 0, NUM_LED_CHANNELS, default_led_values) != ESP_OK)
     ESP_LOGE(PCA_LED_TAG, "Could not set PWM values");
 }
 void blue(uint16_t *blue_value)
 {
   init_leds();
   set_blue(blue_value);
-  if (pca9685_set_pwm_values(&dev, 0, 12, default_led_values) != ESP_OK)
+  if (pca9685_set_pwm_values(&dev, 0, NUM_LED_CHANNELS, default_led_values) != ESP_OK)
     ESP_LOGE(PCA_LED_TAG, "Could not set PWM values");
 }
 void yellow(uint16_t *yellow_value)
@@ -99,7 +107,7 @@ void yellow(uint16_t *yellow_value)
   set_red(yellow_value);
   // Green
   set_green(yellow_value);
-  if (pca9685_set_pwm_values(&dev, 0, 12, default_led_values) != ESP_OK)
+  if (pca9685_set_pwm_values(&dev, 0, NUM_LED_CHANNELS, default_led_values) != ESP_OK)
     ESP_LOGE(PCA_LED_TAG, "Could not set PWM values");
 }
 void magenta(uint16_t *magenta_value)
@@ -109,7 +117,7 @@ void magenta(uint16_t *magenta_value)
   set_red(magenta_value);
   // Blue
   set_blue(magenta_value);
-  if (pca9685_set_pwm_values(&dev, 0, 12, default_led_values) != ESP_OK)
+  if (pca9685_set_pwm_values(&dev, 0, NUM_LED_CHANNELS, default_led_values) != ESP_OK)
     ESP_LOGE(PCA_LED_TAG, "Could not set PWM values");
 }
 void cyan(uint16_t *cyan_value)
@@ -119,7 +127,7 @@ void cyan(uint16_t *cyan_value)
   set_green(cyan_value);
   // Blue
   set_blue(cyan_value);
-  if (pca9685_set_pwm_values(&dev, 0, 12, default_led_values) != ESP_OK)
+  if (pca9685_set_pwm_values(&dev, 0, NUM_LED_CHANNELS, default_led_values) != ESP_OK)
     ESP_LOGE(PCA_LED_TAG, "Could not set PWM values");
 }
 
@@ -132,7 +140,22 @@ void led_to_rgb(uint16_t *r_value, uint16_t *g_value, uint16_t *b_value)
   set_green(g_value);
   // Blue
   set_blue(b_value);
-  if (pca9685_set_pwm_values(&dev, 0, 12, default_led_values) != ESP_OK)
+  if (pca9685_set_pwm_values(&dev, 0, NUM_LED_CHANNELS, default_led_values) != ESP_OK)
+    ESP_LOGE(PCA_LED_TAG, "Could not set PWM values");
+}
+
+void set_target_led_value(uint8_t *target_index, led_cmd_t *cmd)
+{
+  default_led_values[(*target_index * 3) + RED_LED_PIN_INDEX] = 4096 - ((cmd->r_val) * 16);
+  default_led_values[(*target_index * 3) + GREEN_LED_PIN_INDEX] = 4096 - ((cmd->g_val) * 16);
+  default_led_values[(*target_index * 3) + BLUE_LED_PIN_INDEX] = 4096 - ((cmd->b_val) * 16);
+}
+
+void send_led_cmd(uint8_t *target_index, led_cmd_t *cmd)
+{
+  set_target_led_value(target_index, cmd);
+
+  if (pca9685_set_pwm_values(&dev, 0, NUM_LED_CHANNELS, default_led_values) != ESP_OK)
     ESP_LOGE(PCA_LED_TAG, "Could not set PWM values");
 }
 
@@ -152,4 +175,6 @@ void init_pca9685_leds(void)
   ESP_ERROR_CHECK(pca9685_get_pwm_frequency(&dev, &freq));
 
   ESP_LOGI(PCA_LED_TAG, "Freq %dHz, real %d", CONFIG_LED_PWM_FREQ_HZ, freq);
+
+  init_leds();
 }

@@ -4,6 +4,62 @@
 #include <string.h>
 #include <esp_log.h>
 
+typedef struct
+{
+  uint16_t r_val;
+  uint16_t g_val;
+  uint16_t b_val;
+} led_cmd_t;
+
+enum
+{
+  IDX_CMD_OFF,
+  IDX_CMD_GREEN,
+  IDX_CMD_RED,
+  IDX_CMD_YELLOW,
+  IDX_CMD_CYAN,
+  IDX_CMD_MAGENTA,
+  IDX_CMD_BLUE,
+};
+
+static led_cmd_t led_cmd_table[] = {
+    [IDX_CMD_OFF] = {
+        .r_val = 0,
+        .g_val = 0,
+        .b_val = 0,
+    },
+    [IDX_CMD_GREEN] = {
+        .r_val = 0,
+        .g_val = 255,
+        .b_val = 0,
+    },
+    [IDX_CMD_RED] = {
+        .r_val = 255,
+        .g_val = 0,
+        .b_val = 0,
+    },
+    [IDX_CMD_YELLOW] = {
+        .r_val = 255,
+        .g_val = 255,
+        .b_val = 0,
+    },
+    [IDX_CMD_CYAN] = {
+        .r_val = 0,
+        .g_val = 255,
+        .b_val = 255,
+    },
+    [IDX_CMD_MAGENTA] = {
+        .r_val = 255,
+        .g_val = 0,
+        .b_val = 255,
+    },
+    [IDX_CMD_BLUE] = {
+        .r_val = 0,
+        .g_val = 0,
+        .b_val = 255,
+    },
+};
+
 #include "pca9685_leds.h"
 
 #define TIME_BETWEEN_CYCLE_MS 1000
@@ -27,7 +83,7 @@ void pca9685_test(void *pvParameters)
     // green(&val);
 
     // Blue
-    blue(&val);
+    // blue(&val);
 
     // Yellow
     // yellow(&val);
@@ -47,6 +103,35 @@ void pca9685_test(void *pvParameters)
     // Flicker colors
     // red(&val);
     // green(&val);
+    uint8_t target_number[NUM_LEDS] = {0, 1, 2, 3};
+
+    turn_off_leds();
+    send_led_cmd(&target_number[0], &led_cmd_table[3]);
+    vTaskDelay(pdMS_TO_TICKS(TIME_BETWEEN_CYCLE_MS));
+
+    turn_off_leds();
+    send_led_cmd(&target_number[2], &led_cmd_table[1]);
+    vTaskDelay(pdMS_TO_TICKS(TIME_BETWEEN_CYCLE_MS));
+
+    turn_off_leds();
+    send_led_cmd(&target_number[3], &led_cmd_table[2]);
+    vTaskDelay(pdMS_TO_TICKS(TIME_BETWEEN_CYCLE_MS));
+
+    turn_off_leds();
+    send_led_cmd(&target_number[1], &led_cmd_table[4]);
+    vTaskDelay(pdMS_TO_TICKS(TIME_BETWEEN_CYCLE_MS));
+
+    turn_off_leds();
+    send_led_cmd(&target_number[2], &led_cmd_table[5]);
+    vTaskDelay(pdMS_TO_TICKS(TIME_BETWEEN_CYCLE_MS));
+
+    turn_off_leds();
+    send_led_cmd(&target_number[0], &led_cmd_table[6]);
+    vTaskDelay(pdMS_TO_TICKS(TIME_BETWEEN_CYCLE_MS));
+
+    turn_off_leds();
+    send_led_cmd(&target_number[1], &led_cmd_table[7]);
+    vTaskDelay(pdMS_TO_TICKS(TIME_BETWEEN_CYCLE_MS));
 
     // Reset
     if (val++ > 255)
